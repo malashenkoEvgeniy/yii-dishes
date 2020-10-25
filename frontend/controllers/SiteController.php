@@ -1,10 +1,16 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Ingredient;
+use common\models\Recipe;
 use frontend\models\ResendVerificationEmailForm;
+use frontend\models\SelectionRecipe;
 use frontend\models\VerifyEmailForm;
+use frontend\services\IngredientService;
+use frontend\services\RecipeService;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -74,7 +80,40 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new SelectionRecipe();
+        $data = ArrayHelper::getColumn(Ingredient::find()->indexBy('id')
+          ->where(['disabled'=>1])
+          ->all(), 'title');
+        if ($model->load(Yii::$app->request->post())) {
+            $post = Yii::$app->request->post();
+
+            if (count(IngredientService::result($post['SelectionRecipe'])) <= 2) {
+                Yii::$app->session->setFlash('danger', 'Выберите больше ингредиентов.');
+                return $this->goHome();
+            }
+
+            $searchResult = RecipeService::result($post);
+
+            if ($searchResult[0]['count_elems'] < 2) {
+                Yii::$app->session->setFlash('danger', 'Ничего не найдено');
+                return $this->goHome();
+            }
+            $dishes = [];
+            foreach ($searchResult as $item){
+                if($item['count_elems']==5){
+                    array_push($dishes, $item);
+                }
+            }
+            if(empty($dishes)){
+                $dishes = $searchResult;
+            }
+        }
+
+        return $this->render('index', [
+          'model' => $model,
+          'data' => $data,
+           'dishes'=> $dishes
+        ]);
     }
 
     /**

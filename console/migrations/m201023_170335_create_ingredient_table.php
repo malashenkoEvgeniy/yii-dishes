@@ -15,6 +15,7 @@ class m201023_170335_create_ingredient_table extends Migration
         $this->createTable('{{%ingredient}}', [
             'id' => $this->primaryKey(),
             'title' => $this->string(128)->notNull()->unique(),
+            'disabled' => $this->tinyInteger()->defaultValue(1),
         ]);
 
         $this->batchInsert('ingredient', ['title'], [['Вода'],

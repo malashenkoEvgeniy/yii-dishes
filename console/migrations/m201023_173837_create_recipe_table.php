@@ -20,6 +20,7 @@ class m201023_173837_create_recipe_table extends Migration
             'id' => $this->primaryKey(),
             'dishe_id' => $this->integer()->notNull(),
             'ingredient_id' => $this->integer()->notNull(),
+            'disabled' => $this->tinyInteger()->defaultValue(1),
         ]);
 
         // creates index for column `dishe_id`
@@ -68,6 +69,8 @@ class m201023_173837_create_recipe_table extends Migration
                                                               [1,16],
                                                               [1,17],
                                                               [2,5],
+                                                              [2,9],
+                                                              [2,10],
                                                               [2,12],
                                                               [2,16],
                                                               [2,6],
