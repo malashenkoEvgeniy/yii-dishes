@@ -47,7 +47,7 @@ class m201023_173837_create_recipe_table extends Migration
             'ingredient_id'
         );
 
-        // add foreign key for table `{{%ingredient}}`
+        // add foreign key for table `{{%___ingredient}}`
         $this->addForeignKey(
             '{{%fk-recipe-ingredient_id}}',
             '{{%recipe}}',

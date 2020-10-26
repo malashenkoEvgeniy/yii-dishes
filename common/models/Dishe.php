@@ -52,6 +52,14 @@ class Dishe extends \yii\db\ActiveRecord
      */
     public function getRecipes()
     {
-        return $this->hasOne(Recipe::class, ['dishe_id' => 'id']);
+        return $this->hasMany(Recipe::className(), ['dishe_id' => 'id']);
+    }
+
+    public static function create($title)
+    {
+        $dishe = new static();
+        $dishe->title = $title;
+        $dishe->save();
+        return $dishe->id;
     }
 }

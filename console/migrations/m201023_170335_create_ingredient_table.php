@@ -3,7 +3,7 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%ingredient}}`.
+ * Handles the creation of table `{{%___ingredient}}`.
  */
 class m201023_170335_create_ingredient_table extends Migration
 {

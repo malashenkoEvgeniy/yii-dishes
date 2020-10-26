@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $title
+ * @property int|null $disabled
  *
  * @property Recipe[] $recipes
  */
@@ -29,6 +30,7 @@ class Ingredient extends \yii\db\ActiveRecord
     {
         return [
             [['title'], 'required'],
+            [['disabled'], 'integer'],
             [['title'], 'string', 'max' => 128],
             [['title'], 'unique'],
         ];
@@ -42,6 +44,7 @@ class Ingredient extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'title' => 'Title',
+            'disabled' => 'Disabled',
         ];
     }
 
@@ -52,6 +55,18 @@ class Ingredient extends \yii\db\ActiveRecord
      */
     public function getRecipes()
     {
-        return $this->hasMany(Recipe::className(), ['ingredient_id' => 'id']);
+        return $this->hasMany(Recipe::class, ['ingredient_id' => 'id']);
+    }
+
+    public static function create($titleArray)
+    {
+        $id = [];
+        foreach ($titleArray as $title){
+            $ingredient = new static();
+            $ingredient->title = $title;
+            $ingredient->save();
+            array_push($id, $ingredient->id);
+        }
+        return $id;
     }
 }

@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $dishe_id
  * @property int $ingredient_id
+ * @property int|null $disabled
  *
  * @property Dishe $dishe
  * @property Ingredient $ingredient
@@ -31,7 +32,7 @@ class Recipe extends \yii\db\ActiveRecord
     {
         return [
             [['dishe_id', 'ingredient_id'], 'required'],
-            [['dishe_id', 'ingredient_id'], 'integer'],
+            [['dishe_id', 'ingredient_id', 'disabled'], 'integer'],
             [['dishe_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dishe::className(), 'targetAttribute' => ['dishe_id' => 'id']],
             [['ingredient_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ingredient::className(), 'targetAttribute' => ['ingredient_id' => 'id']],
         ];
@@ -44,8 +45,9 @@ class Recipe extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'dishe_id' => 'Dishe ID',
-            'ingredient_id' => 'Ingredient ID',
+            'dishe_id' => 'Блюда',
+            'ingredient_id' => 'Ингридиенты',
+            'disabled' => 'Disabled',
         ];
     }
 
@@ -56,7 +58,7 @@ class Recipe extends \yii\db\ActiveRecord
      */
     public function getDishe()
     {
-        return $this->hasOne(Dishe::className(), ['id' => 'dishe_id']);
+        return $this->hasOne(Dishe::class, ['id' => 'dishe_id']);
     }
 
     /**
@@ -66,6 +68,17 @@ class Recipe extends \yii\db\ActiveRecord
      */
     public function getIngredient()
     {
-        return $this->hasOne(Ingredient::className(), ['id' => 'ingredient_id']);
+        return $this->hasOne(Ingredient::class, ['id' => 'ingredient_id']);
+    }
+
+    public static function create($dishe, $ingredients)
+    {
+        foreach ($ingredients as $ingredient) {
+            $recipe = new static();
+            $recipe->dishe_id = $dishe;
+            $recipe->ingredient_id = $ingredient;
+            $recipe->save();
+        }
+        return true;
     }
 }
